@@ -38,14 +38,18 @@ Fahrenheit to Kelvin: K = (F-32) (5/9) + 273.15
 Kelvin to Fahrenheit: F = (K-273.15) (9/5) + 32
 */
 
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <cstdio>
 #include <cstdlib>
-#include <Windows.h>
+#include <windows.h>
+//#include "simp_win.cpp"
 //#include <opencv2/core/core.hpp>
 //#include <opencv2/highgui/highgui.hpp>
+
+
 
 #define KELVIN_CELSIUS 273.15
 #define FAHRENHEIT_CELSIUS 32
@@ -61,17 +65,20 @@ Kelvin to Fahrenheit: F = (K-273.15) (9/5) + 32
 
 using namespace std;
 
+
+
+
 class Temp_Convert {
 
 
 	static struct Temp_Data {
-		signed int start_temp;
-		signed int end_temp;
-		signed int step;
+		signed int start_temp = NULL;
+		signed int end_temp = NULL;
+		signed int step = NULL;
 
-		signed int celsius;
-		signed int fahreneit;
-		signed int kelvin;
+		signed int celsius = NULL;
+		signed int fahreneit = NULL;
+		signed int kelvin = NULL;
 
 		char current_temp[MAX_CHAR];
 		char convert_temp[MAX_CHAR];
@@ -82,12 +89,12 @@ class Temp_Convert {
 
 public:
 	void print_statements() {
-		char loc_start_temp = NULL;
-		char loc_end_temp = NULL;
-		char loc_step = NULL;
+		signed int local_start_temp = NULL;
+		signed int local_end_temp = NULL;
+		signed int local_step = NULL;
 
-		char loc_current_temp[MAX_CHAR];
-		char loc_convert_temp[MAX_CHAR];
+		char local_current_temp[MAX_CHAR];
+		char local_convert_temp[MAX_CHAR];
 
 		struct Temp_Data temp_data;
 
@@ -102,7 +109,7 @@ public:
 				//cin.getline(temp_data.current_temp, MAX_CHAR);
 				//scanf_s("%10s",temp_data.test_string);
 				//cin >> temp_data.current_temp;
-				cin.getline(loc_current_temp, MAX_CHAR);
+				cin.getline(temp_data.current_temp, MAX_CHAR);
 
 
 				//prompt: convert temperature unit and get value 
@@ -119,49 +126,56 @@ public:
 					//cin >> temp_data.convert_temp;
 					//scanf_s(loc_convert_temp, '%c');
 					//fgets(loc_convert_temp, MAX_CHAR, stdin);
-					cin.getline(loc_convert_temp, MAX_CHAR);
-					if (loc_current_temp == loc_convert_temp) {
-						printf("Type in Temperature to Convert other then %s \n", loc_convert_temp);
+					cin.getline(local_convert_temp, MAX_CHAR);
+					if (strncmp(local_convert_temp, temp_data.current_temp, strlen(temp_data.current_temp)) == 0) {
+						printf("Type in Temperature to Convert other then %s \n", local_convert_temp);
 
 					}
-				} while (!(loc_current_temp == loc_convert_temp));
+				} while (strncmp(temp_data.current_temp, local_convert_temp, strlen(temp_data.current_temp)) == 0);
 
 		//validation: check for other values other than three temp units
-		} while (loc_current_temp or loc_convert_temp != KELVIN or CELSIUS or FAHRENHEIT);
+		} while ((strncmp(temp_data.current_temp, KELVIN, strlen(temp_data.current_temp)) +
+			strncmp(temp_data.current_temp, CELSIUS, strlen(temp_data.current_temp)) +
+			strncmp(temp_data.current_temp, FAHRENHEIT, strlen(temp_data.current_temp))==0) &&
+
+			(strncmp(local_convert_temp, KELVIN, strlen(local_convert_temp)) +
+			strncmp(local_convert_temp, CELSIUS, strlen(local_convert_temp)) +
+			strncmp(local_convert_temp, FAHRENHEIT, strlen(local_convert_temp)) == 0));
 
 
 		//prompt: temperature to convert
 		//validaiton: numerical range 	
-		printf("Please give a lower limit >= 0: \n", loc_start_temp);
+		printf("Please give a lower limit >= 0: \n", &local_start_temp);
+		//unsigned int int_start_temp = stol(&local_start_temp, nullptr, 0);
 		do {
 			//cin.getline(temp_data.start_temp, 10);
 			//cin >> temp_data.start_temp;
-			//atol(loc_start_temp);
-			cin >> loc_start_temp;
-			if (loc_start_temp >= LOWER_LIMIT) {
-				printf("Please give a lower limit that is greater than  or equal to 0 other than %c \n", loc_start_temp);
+			//atol(local_start_temp);
+			cin >> local_start_temp;
+			if (local_start_temp < LOWER_LIMIT) {
+				printf("Please give a lower limit that is greater than or equal to 0 other than %i \n", local_start_temp);
 			}
-		} while (!(loc_start_temp >= LOWER_LIMIT));
+		} while (local_start_temp < LOWER_LIMIT);
 
 		printf("Please give a higher limit, 10 > limit <= 50000: \n");
 		do {
 			//cin.getline(temp_data.end_temp, 10);
 			//cin >> temp_data.end_temp;
-			cin >> loc_end_temp;
-			if (loc_end_temp >= STEP_LIMIT && loc_end_temp <= HIGHER_LIMIT) {
-				printf("Please give a lower limit that is greater than 10 or less than 5000 other than %c \n", loc_end_temp);
+			cin >> local_end_temp;
+			if (local_end_temp < STEP_LIMIT || local_end_temp >= HIGHER_LIMIT) {
+				printf("Please give a lower limit that is greater than 10 or less than 5000 other than %i \n", local_end_temp);
 			}
-		} while (!(loc_end_temp >= STEP_LIMIT && loc_end_temp <= HIGHER_LIMIT));
+		} while (local_end_temp < STEP_LIMIT || local_end_temp >= HIGHER_LIMIT);
 
 		//TODO:you should not allow a step size greater than the difference in temperatures???
 		printf("Please give a step, 0 > step <= 10: \n");
 		do {
 			//cin.getline(temp_data.step, 10);
-			cin >> loc_step;
-			if (loc_step > LOWER_LIMIT && loc_step <= STEP_LIMIT) {
-				printf("Please give a step limit that is greater than 0 or less than 10 other than %c \n",  loc_step);
+			cin >> local_step;
+			if (local_step < LOWER_LIMIT || local_step > STEP_LIMIT) {
+				printf("Please give a step limit that is greater than 0 or less than 10 other than %i \n",  local_step);
 			}
-		} while (!(loc_step > LOWER_LIMIT && loc_step <= STEP_LIMIT));
+		} while (local_step < LOWER_LIMIT || local_step > STEP_LIMIT);
 
 			
 		/*char *convert_temp = temp_data.convert_temp;
@@ -169,9 +183,13 @@ public:
 		cout << convert_temp;
 		cout << &convert_temp;
 		cout << *convert_temp;*/
-		Temp_Convert::temp_convert(temp_data.start_temp, temp_data.end_temp, temp_data.step, temp_data.convert_temp, temp_data.current_temp);
-			
-	 }
+
+	
+		Temp_Convert::temp_convert(local_start_temp, local_end_temp, local_step, local_convert_temp, temp_data.current_temp);
+
+		
+		
+	}
 
 public:
 	signed int temp_convert(signed int start_temp, signed int end_temp, signed int step, char* convert_temp, char* current_temp) {
@@ -184,26 +202,26 @@ public:
 			temp_convert += convert_temp[i];
 		}
 */
-		if (current_temp == CELSIUS && convert_temp == KELVIN) {
+		if (strncmp(current_temp, CELSIUS, strlen(current_temp)) + strncmp(convert_temp, KELVIN, strlen(convert_temp)) == 0) {
 			temp_data.kelvin = start_temp + KELVIN_CELSIUS;
 		}
-		else if (current_temp == KELVIN && temp_data.convert_temp == CELSIUS) {
+		else if (strncmp(current_temp, KELVIN, strlen(current_temp)) + strncmp(temp_data.convert_temp, CELSIUS, strlen(temp_data.convert_temp)) == 0) {
 			temp_data.celsius = start_temp - KELVIN_CELSIUS;
 		}
-		else if (current_temp == FAHRENHEIT && convert_temp == CELSIUS) {
+		else if (strncmp(current_temp, FAHRENHEIT, strlen(current_temp)) + strncmp(convert_temp, CELSIUS, strlen(convert_temp)) == 0) {
 			temp_data.celsius = (start_temp - FAHRENHEIT_CELSIUS) * CONVERT_FRACTION;
 		}
-		else if (current_temp == CELSIUS && convert_temp == FAHRENHEIT) {
+		else if (strncmp(current_temp, CELSIUS, strlen(current_temp)) + strncmp(convert_temp, FAHRENHEIT, strlen(convert_temp)) == 0 ){
 			temp_data.fahreneit = (start_temp * FRACTION_CONVERT) + FAHRENHEIT_CELSIUS;
 		}
-		else if (current_temp == FAHRENHEIT && convert_temp == KELVIN) {
+		else if (strncmp(current_temp, FAHRENHEIT, strlen(current_temp)) + strncmp(convert_temp, KELVIN, strlen(convert_temp)) == 0) {
 			temp_data.kelvin = ((start_temp - FAHRENHEIT_CELSIUS) * CONVERT_FRACTION) + KELVIN_CELSIUS;
 		}
-		else if (current_temp == KELVIN && convert_temp == FAHRENHEIT) {
+		else if (strncmp(current_temp, KELVIN, strlen(current_temp)) + strncmp(convert_temp, FAHRENHEIT, strlen(convert_temp)) == 0) {
 			temp_data.fahreneit = (start_temp - KELVIN_CELSIUS) * FRACTION_CONVERT + FAHRENHEIT_CELSIUS;
 		}
 		else {
-			printf("Danger Will Robinson");
+			printf("Danger, Will Robinson");
 		}
 /*
 		switch (current_temp, convert_temp)
@@ -229,6 +247,7 @@ public:
 		}
 */
 		end_temp = temp_data.kelvin = temp_data.fahreneit = temp_data.celsius;
+		printf("The Temperature Converstion is: %i ", end_temp);
 		return end_temp;
 	}
 
@@ -262,9 +281,12 @@ int main() {
 	Temp_Convert temp_convert;
 
 
-	fullscreen();
-	temp_convert.print_statements();
 	
+	temp_convert.print_statements();
+	//fullscreen();
+	//wWinMain();
 
+	
+	return 0;
 
 }
