@@ -31,8 +31,8 @@ Sample run:
 
 /*
 Celsius to Kelvin: K = C + 273.15
-Kelvin to Celcius: C = K - 273.15
-Fahrenheit to Celcius: C = (F-32) (5/9)
+Kelvin to Celsius: C = K - 273.15
+Fahrenheit to Celsius: C = (F-32) (5/9)
 Celsius to Fahrenheit: F = C(9/5) + 32
 Fahrenheit to Kelvin: K = (F-32) (5/9) + 273.15
 Kelvin to Fahrenheit: F = (K-273.15) (9/5) + 32
@@ -40,10 +40,10 @@ Kelvin to Fahrenheit: F = (K-273.15) (9/5) + 32
 
 
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <cstdio>
 #include <cstdlib>
+#include <cctype>
 #include <windows.h>
 //#include "simp_win.cpp"
 //#include <opencv2/core/core.hpp>
@@ -53,15 +53,16 @@ Kelvin to Fahrenheit: F = (K-273.15) (9/5) + 32
 
 #define KELVIN_CELSIUS 273.15
 #define FAHRENHEIT_CELSIUS 32
-#define CONVERT_FRACTION 5/9
-#define FRACTION_CONVERT 9/5
+#define CONVERT_FRACTION 0.55555
+#define FRACTION_CONVERT 1.8
 #define LOWER_LIMIT 0
 #define HIGHER_LIMIT 5000
 #define STEP_LIMIT 10
 #define MAX_CHAR 20
-#define KELVIN "Kelvin"
-#define CELSIUS "Celsius"
-#define FAHRENHEIT "Fahrenheit"
+#define KELVIN "kelvin"
+#define CELSIUS "celsius"
+#define FAHRENHEIT "fahrenheit"
+
 
 using namespace std;
 
@@ -72,80 +73,108 @@ class Temp_Convert {
 
 
 	static struct Temp_Data {
-		signed int start_temp = NULL;
-		signed int end_temp = NULL;
-		signed int step = NULL;
+		float start_temp = NULL;
+		float end_temp = NULL;
+		float step = NULL;
 
-		signed int celsius = NULL;
-		signed int fahreneit = NULL;
-		signed int kelvin = NULL;
+		float celsius = NULL;
+		float fahreneit = NULL;
+		float kelvin = NULL;
 
 		char current_temp[MAX_CHAR];
 		char convert_temp[MAX_CHAR];
-		string test_string;
 
-		
+
 	};
 
 public:
 	void print_statements() {
-		signed int local_start_temp = NULL;
-		signed int local_end_temp = NULL;
-		signed int local_step = NULL;
+		float local_start_temp = NULL;
+		float local_end_temp = NULL;
+		float local_step = NULL;
 
 		char local_current_temp[MAX_CHAR];
 		char local_convert_temp[MAX_CHAR];
 
+
 		struct Temp_Data temp_data;
 
-
+		
+		//initial print statements
+		//prompt: current temp unit prompt and get value 
+		printf("Type in Current Unit of Temparature. \n");
+		printf("Celsius \n");
+		printf("Kelvin \n");
+		printf("Fahrenheit \n");
+		//cin.getline(temp_data.current_temp, MAX_CHAR);
+		//scanf_s("%10s",temp_data.test_string);
+		//cin >> temp_data.current_temp;
 		do {
-				//initial print statements
-				//prompt: current temp unit prompt and get value 
-				printf("Type in Current Unit of Temparature. \n");
-				printf("Celsuis \n");
-				printf("Kelvin \n");
-				printf("Fahrenheit \n");
-				//cin.getline(temp_data.current_temp, MAX_CHAR);
-				//scanf_s("%10s",temp_data.test_string);
-				//cin >> temp_data.current_temp;
-				cin.getline(temp_data.current_temp, MAX_CHAR);
+			cin.getline(temp_data.current_temp, MAX_CHAR);
+			for (int i = 0; i < strlen(temp_data.current_temp); i++) {
+					if (isupper(temp_data.current_temp[i])) {
+						temp_data.current_temp[i] = temp_data.current_temp[i] + 32;
+				}
+			}
+			if (!(strncmp(temp_data.current_temp, CELSIUS, strlen(temp_data.current_temp)) == 0 || strncmp(temp_data.current_temp, KELVIN, strlen(temp_data.current_temp)) == 0 || strncmp(temp_data.current_temp, FAHRENHEIT, strlen(temp_data.current_temp)) == 0)) {
 
+				printf("Check yourself before you wreck yourself...or just the spell to ensure the correct temperatures were choosen!\n");
+			}
+		} while (!(strncmp(temp_data.current_temp, CELSIUS, strlen(temp_data.current_temp)) == 0 || strncmp(temp_data.current_temp, KELVIN, strlen(temp_data.current_temp)) == 0 || strncmp(temp_data.current_temp, FAHRENHEIT, strlen(temp_data.current_temp)) == 0));
 
-				//prompt: convert temperature unit and get value 
-				printf("Type in Temperature to Convert. \n");
-				printf("Celsuis \n");
-				printf("Kelvin \n");
-				printf("Fahrenheit \n");
-				//cin.getline(temp_data.current_temp, MAX_CHAR);
-				//cin.getline(loc_convert_temp, MAX_CHAR);
+		//prompt: convert temperature unit and get value 
+		printf("Type in Temperature to Convert. \n");
+		printf("Celsius \n");
+		printf("Kelvin \n");
+		printf("Fahrenheit \n");
+		//cin.getline(temp_data.current_temp, MAX_CHAR);
+		//cin.getline(loc_convert_temp, MAX_CHAR);
 
+		
 
-				//validation: same temperature unit
-				do {
-					//cin >> temp_data.convert_temp;
-					//scanf_s(loc_convert_temp, '%c');
-					//fgets(loc_convert_temp, MAX_CHAR, stdin);
+		//validation: same temperature unit
+		do {
+			//cin >> temp_data.convert_temp;
+			//scanf_s(loc_convert_temp, '%c');
+			//fgets(loc_convert_temp, MAX_CHAR, stdin);
+			//cin.getline(local_convert_temp, MAX_CHAR);
+			do {
 					cin.getline(local_convert_temp, MAX_CHAR);
-					if (strncmp(local_convert_temp, temp_data.current_temp, strlen(temp_data.current_temp)) == 0) {
-						printf("Type in Temperature to Convert other then %s \n", local_convert_temp);
-
+					for (int i = 0; i < strlen(local_convert_temp); i++) {
+						if (isupper(local_convert_temp[i])) {
+							local_convert_temp[i] = local_convert_temp[i] + 32;
+						}
 					}
-				} while (strncmp(temp_data.current_temp, local_convert_temp, strlen(temp_data.current_temp)) == 0);
+					if (!(strncmp(local_convert_temp, CELSIUS, strlen(local_convert_temp)) == 0 || strncmp(local_convert_temp, KELVIN, strlen(local_convert_temp)) == 0 || strncmp(local_convert_temp, FAHRENHEIT, strlen(local_convert_temp)) == 0)) {
 
-		//validation: check for other values other than three temp units
-		} while ((strncmp(temp_data.current_temp, KELVIN, strlen(temp_data.current_temp)) +
-			strncmp(temp_data.current_temp, CELSIUS, strlen(temp_data.current_temp)) +
-			strncmp(temp_data.current_temp, FAHRENHEIT, strlen(temp_data.current_temp))==0) &&
+						printf("Check yourself before you wreck yourself...or just the spell to ensure the correct temperatures were choosen!\n");
+						
+					}
 
-			(strncmp(local_convert_temp, KELVIN, strlen(local_convert_temp)) +
-			strncmp(local_convert_temp, CELSIUS, strlen(local_convert_temp)) +
-			strncmp(local_convert_temp, FAHRENHEIT, strlen(local_convert_temp)) == 0));
+			} while (!(strncmp(local_convert_temp, CELSIUS, strlen(local_convert_temp)) == 0 || strncmp(local_convert_temp, KELVIN, strlen(local_convert_temp)) == 0 || strncmp(local_convert_temp, FAHRENHEIT, strlen(local_convert_temp)) == 0));
+
+				if (strncmp(local_convert_temp, temp_data.current_temp, strlen(temp_data.current_temp)) == 0) {
+					printf("Type in Temperature to Convert other then %s \n", local_convert_temp);
+
+				}
+		} while (strncmp(temp_data.current_temp, local_convert_temp, strlen(temp_data.current_temp)) == 0);
+
+		
+				//validation: check for other values other than three temp units
+				/*
+				while (((strncmp(temp_data.current_temp, KELVIN, strlen(temp_data.current_temp)) == 0) ||
+				(strncmp(temp_data.current_temp, CELSIUS, strlen(temp_data.current_temp))==0) ||
+				(strncmp(temp_data.current_temp, FAHRENHEIT, strlen(temp_data.current_temp))==0)) ||
+
+				(strncmp(local_convert_temp, KELVIN, strlen(local_convert_temp))==0) ||
+				(strncmp(local_convert_temp, CELSIUS, strlen(local_convert_temp))==0 ||
+				(strncmp(local_convert_temp, FAHRENHEIT, strlen(local_convert_temp))==0)));
+				*/
 
 
 		//prompt: temperature to convert
 		//validaiton: numerical range 	
-		printf("Please give a lower limit >= 0: \n", &local_start_temp);
+		printf("Please give a lower limit >= 0: \n");
 		//unsigned int int_start_temp = stol(&local_start_temp, nullptr, 0);
 		do {
 			//cin.getline(temp_data.start_temp, 10);
@@ -184,40 +213,52 @@ public:
 		cout << &convert_temp;
 		cout << *convert_temp;*/
 
-	
-		Temp_Convert::temp_convert(local_start_temp, local_end_temp, local_step, local_convert_temp, temp_data.current_temp);
+		/*
+		if ((strncmp(temp_data.current_temp, CELSIUS, strlen(temp_data.current_temp)) == 0 || strncmp(temp_data.current_temp, KELVIN, strlen(temp_data.current_temp)) == 0 || strncmp(temp_data.current_temp, FAHRENHEIT, strlen(temp_data.current_temp)) == 0) && 
+			
+			(strncmp(local_convert_temp, CELSIUS, strlen(local_convert_temp)) == 0 || strncmp(local_convert_temp, KELVIN, strlen(local_convert_temp)) == 0 || strncmp(local_convert_temp, FAHRENHEIT, strlen(local_convert_temp)) == 0)) {
+				Temp_Convert::temp_convert(local_start_temp, local_end_temp, local_step, local_convert_temp, temp_data.current_temp);
+			
 
-		
+		}
+		else {
+				printf("Check yourself before you wreck yourself...or just the spell to ensure the correct temperatures were choosen!\n\n");
+				Temp_Convert::print_statements();
+		}
+		*/
+		Temp_Convert::temp_convert(local_start_temp, local_end_temp, local_step, local_convert_temp, temp_data.current_temp);
 		
 	}
 
 public:
-	signed int temp_convert(signed int start_temp, signed int end_temp, signed int step, char* convert_temp, char* current_temp) {
+	signed int temp_convert(float start_temp, float end_temp, float step, char* convert_temp, char* current_temp) {
 		struct Temp_Data temp_data;
+		//Temp_Data::Temp_Data(char next_convert_temp[MAX_CHAR]) : { convert_temp = next_convert_temp; }
 		
-
 
 		/*for (int i = 0; i <= sizeof(convert_temp); ++i) {
 			char temp_convert = NULL;
 			temp_convert += convert_temp[i];
 		}
-*/
-		if (strncmp(current_temp, CELSIUS, strlen(current_temp)) + strncmp(convert_temp, KELVIN, strlen(convert_temp)) == 0) {
+		*/
+
+
+		if (strncmp(current_temp, CELSIUS, strlen(current_temp)) == 0 && strncmp(convert_temp, KELVIN, strlen(convert_temp)) == 0)  {
 			temp_data.kelvin = start_temp + KELVIN_CELSIUS;
 		}
-		else if (strncmp(current_temp, KELVIN, strlen(current_temp)) + strncmp(temp_data.convert_temp, CELSIUS, strlen(temp_data.convert_temp)) == 0) {
+		else if (strncmp(current_temp, KELVIN, strlen(current_temp)) == 0 && strncmp(temp_data.convert_temp, CELSIUS, strlen(temp_data.convert_temp)) == 0) {
 			temp_data.celsius = start_temp - KELVIN_CELSIUS;
 		}
-		else if (strncmp(current_temp, FAHRENHEIT, strlen(current_temp)) + strncmp(convert_temp, CELSIUS, strlen(convert_temp)) == 0) {
+		else if (strncmp(current_temp, FAHRENHEIT, strlen(current_temp)) == 0 && strncmp(convert_temp, CELSIUS, strlen(convert_temp)) == 0) {
 			temp_data.celsius = (start_temp - FAHRENHEIT_CELSIUS) * CONVERT_FRACTION;
 		}
-		else if (strncmp(current_temp, CELSIUS, strlen(current_temp)) + strncmp(convert_temp, FAHRENHEIT, strlen(convert_temp)) == 0 ){
+		else if (strncmp(current_temp, CELSIUS, strlen(current_temp)) == 0 && strncmp(convert_temp, FAHRENHEIT, strlen(convert_temp)) == 0 ){
 			temp_data.fahreneit = (start_temp * FRACTION_CONVERT) + FAHRENHEIT_CELSIUS;
 		}
-		else if (strncmp(current_temp, FAHRENHEIT, strlen(current_temp)) + strncmp(convert_temp, KELVIN, strlen(convert_temp)) == 0) {
+		else if (strncmp(current_temp, FAHRENHEIT, strlen(current_temp)) == 0 && strncmp(convert_temp, KELVIN, strlen(convert_temp)) == 0) {
 			temp_data.kelvin = ((start_temp - FAHRENHEIT_CELSIUS) * CONVERT_FRACTION) + KELVIN_CELSIUS;
 		}
-		else if (strncmp(current_temp, KELVIN, strlen(current_temp)) + strncmp(convert_temp, FAHRENHEIT, strlen(convert_temp)) == 0) {
+		else if (strncmp(current_temp, KELVIN, strlen(current_temp)) == 0 && strncmp(convert_temp, FAHRENHEIT, strlen(convert_temp)) == 0) {
 			temp_data.fahreneit = (start_temp - KELVIN_CELSIUS) * FRACTION_CONVERT + FAHRENHEIT_CELSIUS;
 		}
 		else {
@@ -247,7 +288,14 @@ public:
 		}
 */
 		end_temp = temp_data.kelvin = temp_data.fahreneit = temp_data.celsius;
-		printf("The Temperature Converstion is: %i ", end_temp);
+		printf("The Temperature Converstion is: %i \n", end_temp);
+		printf("%s          %s\n", current_temp, convert_temp);
+		printf("\---------- \- \----------\n");
+		for (int i = 0; i < 3; i++) {
+			printf("%i            %i\n", start_temp, end_temp);
+			start_temp += step;
+			end_temp += step;
+		};
 		return end_temp;
 	}
 
